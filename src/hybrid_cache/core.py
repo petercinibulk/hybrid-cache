@@ -17,6 +17,10 @@ from redis.asyncio import Redis
 P = ParamSpec("P")
 T = TypeVar("T")
 
+RedisFields = Mapping[bytes | str, bytes | str]
+RedisMessage = tuple[bytes | str, RedisFields]
+RedisStreamResponse = list[tuple[bytes | str, list[RedisMessage]]]
+
 
 @runtime_checkable
 class Serializer(Protocol):
@@ -295,12 +299,15 @@ class HybridCache:
             return
 
         while not self._stopped.is_set():
-            response = await self._redis.xreadgroup(
-                groupname=self._group_name,
-                consumername=self._consumer_name,
-                streams={self._invalidation_stream: ">"},
-                count=25,
-                block=5_000,
+            response = cast(
+                RedisStreamResponse,
+                await self._redis.xreadgroup(
+                    groupname=self._group_name,
+                    consumername=self._consumer_name,
+                    streams={self._invalidation_stream: ">"},
+                    count=25,
+                    block=5_000,
+                ),
             )
 
             for _, messages in response:
@@ -310,7 +317,7 @@ class HybridCache:
     async def _process_invalidation(
         self,
         message_id: bytes | str,
-        fields: Mapping[bytes | str, bytes | str],
+        fields: RedisFields,
     ) -> None:
         if self._redis is None:
             return
@@ -325,7 +332,7 @@ class HybridCache:
         except Exception:
             return
 
-    def _handle_invalidation(self, fields: Mapping[bytes | str, bytes | str]) -> None:
+    def _handle_invalidation(self, fields: RedisFields) -> None:
         event_type = self._get_field(fields, "type")
         node_id = self._get_field(fields, "node_id")
 
@@ -337,7 +344,7 @@ class HybridCache:
         elif event_type == "clear":
             self.clear_memory()
 
-    def _get_field(self, fields: Mapping[bytes | str, bytes | str], key: str) -> str:
+    def _get_field(self, fields: RedisFields, key: str) -> str:
         value = fields.get(key)
         if value is None:
             value = fields[key.encode("utf-8")]
@@ -374,10 +381,10 @@ class CachedFunction(Generic[P, T]):
         await self._cache.remove(self.cache_key(*args, **kwargs))
 
     def cache_key(self, *args: P.args, **kwargs: P.kwargs) -> str:
-        if callable(self._key):
-            return self._key(*args, **kwargs)
+        if isinstance(self._key, str):
+            return self._key
 
-        return self._key
+        return self._key(*args, **kwargs)
 
 
 def cached(
