@@ -39,3 +39,6 @@ jobs:
 
       - name: Test
         run: uv run pytest
+
+      - name: Build package
+        run: uv build --no-sources
