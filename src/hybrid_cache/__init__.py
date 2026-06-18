@@ -1,6 +1,6 @@
 from hybrid_cache.core import (
-    CacheOptions,
     CachedFunction,
+    CacheOptions,
     DistributedCache,
     HybridCache,
     PickleSerializer,
