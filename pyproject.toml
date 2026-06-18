@@ -5,12 +5,8 @@ description = "Async hybrid Python cache with in-memory L1, Redis L2, Redis Stre
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-authors = [
-  { name = "Peter Cinibulk" }
-]
-dependencies = [
-  "redis>=5.0.0",
-]
+authors = [{ name = "Peter Cinibulk" }]
+dependencies = ["redis>=5.0.0"]
 
 [dependency-groups]
 dev = [
@@ -36,24 +32,8 @@ target-version = "py312"
 src = ["src", "tests"]
 
 [tool.ruff.lint]
-select = [
-  "A",
-  "ASYNC",
-  "B",
-  "C4",
-  "E",
-  "F",
-  "I",
-  "N",
-  "PERF",
-  "RUF",
-  "SIM",
-  "UP",
-  "W",
-]
-ignore = [
-  "B904",
-]
+select = ["A", "ASYNC", "B", "C4", "E", "F", "I", "N", "PERF", "RUF", "SIM", "UP", "W"]
+ignore = ["B904", "UP046", "UP047"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -66,6 +46,7 @@ testpaths = ["tests"]
 [tool.ty.environment]
 python-version = "3.12"
 python-platform = "all"
+root = ["./src"]
 
 [tool.ty.src]
-root = "./src"
+include = ["src", "tests"]
