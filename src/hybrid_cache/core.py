@@ -9,7 +9,7 @@ import uuid
 from collections.abc import Awaitable, Callable, Mapping
 from contextlib import suppress
 from dataclasses import dataclass
-from typing import Any, Generic, ParamSpec, Protocol, TypeAlias, TypeVar, cast, overload
+from typing import Generic, ParamSpec, Protocol, TypeAlias, TypeVar, cast, overload
 
 from redis.asyncio import Redis
 
