@@ -2,9 +2,19 @@
 
 Async hybrid Python cache with in-memory L1 caching, optional Redis L2 caching, pluggable invalidation, stampede protection, fail-safe stale values, and typed decorators.
 
+## Features
+
+- Async-first API for Python 3.12 and newer.
+- Fast in-process L1 cache with optional Redis-backed L2 storage.
+- Pluggable invalidation buses for Redis Streams, RabbitMQ, Kafka, and PostgreSQL.
+- Request stampede protection with per-key refresh coordination.
+- Fail-safe stale reads for short backend outages.
+- Typed decorators that preserve the wrapped function signature.
+- Serializer choices for JSON, pickle, and Pydantic models.
+
 ## Documentation
 
-The end-user documentation is in [`docs/`](docs/index.md) and is built with Zensical.
+The end-user documentation is published at <https://petercinibulk.github.io/hybrid-cache/> and is built from [`docs/`](docs/index.md) with Zensical.
 
 ## Install
 
@@ -21,6 +31,15 @@ uv add "hybrid-cache[kafka]"
 uv add "hybrid-cache[postgres]"
 uv add "hybrid-cache[all]"
 ```
+
+| Extra | Installs | Use when |
+| --- | --- | --- |
+| `redis` | `redis` | You need Redis L2 storage or Redis Streams invalidation. |
+| `rabbitmq` | `aio-pika` | You use RabbitMQ as the invalidation bus. |
+| `kafka` | `aiokafka` | You use Kafka as the invalidation bus. |
+| `postgres` | `asyncpg` | You use PostgreSQL `LISTEN`/`NOTIFY` for invalidation. |
+| `pydantic` | `pydantic` | You want Pydantic model serialization helpers. |
+| `all` | all provider dependencies | You want every optional provider available. |
 
 ## Quick Start
 
@@ -49,4 +68,32 @@ await get_user.remove_cached("123")
 await cache.stop()
 ```
 
-For Redis-backed shared values and cross-instance invalidation, see the docs: [`docs/tutorials/get-started.md`](docs/tutorials/get-started.md).
+## Redis L2 Example
+
+```python
+from redis.asyncio import Redis
+
+from hybrid_cache import CacheOptions, HybridCache, RedisDistributedCache, cached
+
+redis = Redis.from_url("redis://localhost:6379/0")
+
+cache = HybridCache(
+    distributed_cache=RedisDistributedCache(redis),
+    options=CacheOptions(ttl_seconds=60, fail_safe_seconds=300),
+)
+
+await cache.start()
+
+
+@cached(cache, lambda product_id: f"product:{product_id}")
+async def get_product(product_id: str) -> dict[str, str]:
+    return {"id": product_id}
+```
+
+For a complete walkthrough with shared values and cross-instance invalidation, see the [get started tutorial](https://petercinibulk.github.io/hybrid-cache/tutorials/get-started/).
+
+## Project
+
+- License: MIT
+- Source: <https://github.com/petercinibulk/hybrid-cache>
+- Issues: <https://github.com/petercinibulk/hybrid-cache/issues>

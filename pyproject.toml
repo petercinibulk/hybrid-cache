@@ -6,8 +6,31 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "Peter Cinibulk" }]
-dependencies = []
 
+# Published dependencies.
+dependencies = []
+keywords = ["async", "cache", "redis", "invalidation", "stampede-protection"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Changelog = "https://github.com/petercinibulk/hybrid-cache/blob/main/CHANGELOG.md"
+Documentation = "https://petercinibulk.github.io/hybrid-cache/"
+Issues = "https://github.com/petercinibulk/hybrid-cache/issues"
+Repository = "https://github.com/petercinibulk/hybrid-cache"
+
+# Published optional dependencies, or "extras".
 [project.optional-dependencies]
 kafka = ["aiokafka>=0.10.0"]
 postgres = ["asyncpg>=0.29.0"]
@@ -22,6 +45,7 @@ all = [
   "pydantic>=1.10.0",
 ]
 
+# Local dependencies for development.
 [dependency-groups]
 redis = ["redis>=5.0.0"]
 rabbitmq = ["aio-pika>=9.0.0"]
