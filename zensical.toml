@@ -59,7 +59,7 @@ features = [
 ]
 
 [project.theme.icon]
-logo = "lucide/rocket"
+logo = "lucide/database-zap"
 repo = "fontawesome/brands/github"
 
 [[project.theme.palette]]
