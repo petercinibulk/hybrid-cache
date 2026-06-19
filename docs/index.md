@@ -1,6 +1,6 @@
-# hybrid-cache
+# Hybrid-Cache
 
-`hybrid-cache` helps async Python applications cache expensive work in local memory, optionally share values through Redis, and keep multiple application instances in sync with an invalidation bus.
+`Hybrid-Cache` helps async Python applications cache expensive work in local memory, optionally share values through Redis, and keep multiple application instances in sync with an invalidation bus.
 
 ## Choose your path
 

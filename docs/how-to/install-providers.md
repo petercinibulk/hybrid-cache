@@ -1,6 +1,6 @@
 # Install Optional Providers
 
-`hybrid-cache` has no required runtime dependencies. Install only the providers your application uses.
+`Hybrid-Cache` has no required runtime dependencies. Install only the providers your application uses.
 
 ## Redis distributed cache and Redis Streams invalidation
 

@@ -1,6 +1,6 @@
 # L1 and L2 Caching
 
-`hybrid-cache` reads values in this order:
+`Hybrid-Cache` reads values in this order:
 
 ```text
 local memory L1 -> distributed L2 -> value factory
@@ -10,4 +10,4 @@ The L1 cache is inside each application process. It is the fastest place to read
 
 The optional L2 cache stores shared values. Redis is the current distributed cache provider. L2 helps multiple application instances reuse the same cached value without each instance recomputing it.
 
-When a value is missing or expired in L1, `hybrid-cache` checks L2 if configured. If L2 has a value, the local L1 cache is refreshed from that value. If L2 misses, the wrapped async function or factory runs and the new value is stored.
+When a value is missing or expired in L1, `Hybrid-Cache` checks L2 if configured. If L2 has a value, the local L1 cache is refreshed from that value. If L2 misses, the wrapped async function or factory runs and the new value is stored.

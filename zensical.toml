@@ -1,6 +1,6 @@
 [project]
 site_name = "Hybrid-Cache"
-site_description = "End-user documentation for adopting hybrid-cache in async Python applications."
+site_description = "End-user documentation for adopting Hybrid-Cache in async Python applications."
 site_author = "Peter Cinibulk"
 site_url = "https://petercinibulk.github.io/hybrid-cache/"
 repo_url = "https://github.com/petercinibulk/hybrid-cache"

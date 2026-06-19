@@ -13,7 +13,7 @@ async def get_settings(tenant_id: str) -> dict[str, str]:
     ...
 ```
 
-When no key is supplied, `hybrid-cache` builds one from the function module, qualified name, and bound arguments.
+When no key is supplied, `Hybrid-Cache` builds one from the function module, qualified name, and bound arguments.
 
 ## Use a custom key
 
