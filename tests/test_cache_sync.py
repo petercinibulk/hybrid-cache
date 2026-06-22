@@ -284,3 +284,62 @@ async def test_cache_policy_overrides_inherit_unsupplied_constructor_defaults() 
             slow_factory,
             options=CacheOptions(ttl_seconds=60),
         )
+
+
+@pytest.mark.asyncio
+async def test_max_keys_removes_oldest_cached_key() -> None:
+    cache = CacheSync(options=CacheOptions(ttl_seconds=60, max_keys=2))
+
+    await cache.set("first", "one")
+    await cache.set("second", "two")
+    await cache.set("third", "three")
+
+    assert list(cache._memory) == ["second", "third"]
+
+
+@pytest.mark.asyncio
+async def test_max_keys_does_not_remove_key_when_value_is_refreshed() -> None:
+    cache = CacheSync(options=CacheOptions(ttl_seconds=60, max_keys=2))
+
+    await cache.set("first", "one")
+    await cache.set("second", "two")
+    await cache.set("first", "updated")
+
+    assert list(cache._memory) == ["first", "second"]
+    assert cache._memory["first"].value == "updated"
+
+
+@pytest.mark.asyncio
+async def test_max_keys_composes_with_decorator_and_ttl() -> None:
+    cache = CacheSync(options=CacheOptions(ttl_seconds=60, max_keys=2))
+    calls = 0
+
+    @cache.cached(lambda key: key, options=CacheOptions(ttl_seconds=0.01))
+    async def load(key: str) -> str:
+        nonlocal calls
+        calls += 1
+        return f"{key}-{calls}"
+
+    assert await load("first") == "first-1"
+    assert await load("second") == "second-2"
+    assert await load("third") == "third-3"
+    assert list(cache._memory) == ["second", "third"]
+
+    await asyncio.sleep(0.02)
+
+    assert await load("second") == "second-4"
+    assert list(cache._memory) == ["second", "third"]
+
+
+@pytest.mark.asyncio
+async def test_max_keys_override_can_raise_or_disable_constructor_limit() -> None:
+    cache = CacheSync(options=CacheOptions(ttl_seconds=60, max_keys=1))
+
+    await cache.set("first", "one")
+    await cache.set("second", "two", options=CacheOptions(max_keys=2))
+
+    assert list(cache._memory) == ["first", "second"]
+
+    await cache.set("third", "three", options=CacheOptions(max_keys=None))
+
+    assert list(cache._memory) == ["first", "second", "third"]

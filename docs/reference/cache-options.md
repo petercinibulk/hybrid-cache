@@ -1,6 +1,7 @@
 # Cache Options
 
-`CacheOptions` controls freshness, stale fallback, factory timeout, and TTL jitter.
+`CacheOptions` controls freshness, stale fallback, factory timeout, TTL jitter, and
+the maximum number of local keys to retain.
 
 | Option | Type | Default | Meaning |
 | --- | --- | --- | --- |
@@ -8,11 +9,12 @@
 | `fail_safe_seconds` | `float` | `300` | Extra time a stale local value can be returned after a refresh error |
 | `hard_timeout_seconds` | `float` | `5` | Maximum time to wait for the value factory |
 | `jitter_seconds` | `float` | `0` | Random extra seconds added to the TTL |
+| `max_keys` | `int \| None` | `None` | Maximum number of keys to keep in local memory; `None` keeps all keys |
 
 Pass options to the cache for global defaults:
 
 ```python
-cache = CacheSync(options=CacheOptions(ttl_seconds=120))
+cache = CacheSync(options=CacheOptions(ttl_seconds=120, max_keys=1_000))
 ```
 
 Pass options to `@cache.cached`, `get_or_set`, or `set` for a specific cached key:
