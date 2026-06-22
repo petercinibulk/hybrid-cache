@@ -17,6 +17,7 @@ _CACHE_OPTION_DEFAULTS = {
     "fail_safe_seconds": 300.0,
     "hard_timeout_seconds": 5.0,
     "jitter_seconds": 0.0,
+    "max_keys": None,
 }
 
 
@@ -32,12 +33,13 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True, slots=True, init=False)
 class CacheOptions:
-    """Runtime policy for cache freshness, factory timeouts, and TTL jitter."""
+    """Runtime policy for freshness, factory timeouts, TTL jitter, and key count."""
 
     ttl_seconds: float = 60
     fail_safe_seconds: float = 300
     hard_timeout_seconds: float = 5
     jitter_seconds: float = 0
+    max_keys: int | None = None
     _supplied: frozenset[str] = field(
         default_factory=frozenset,
         repr=False,
@@ -50,12 +52,14 @@ class CacheOptions:
         fail_safe_seconds: float | _Unset = _UNSET,
         hard_timeout_seconds: float | _Unset = _UNSET,
         jitter_seconds: float | _Unset = _UNSET,
+        max_keys: int | None | _Unset = _UNSET,
     ) -> None:
         values = {
             "ttl_seconds": ttl_seconds,
             "fail_safe_seconds": fail_safe_seconds,
             "hard_timeout_seconds": hard_timeout_seconds,
             "jitter_seconds": jitter_seconds,
+            "max_keys": max_keys,
         }
         supplied = frozenset(name for name, value in values.items() if value is not _UNSET)
 
@@ -249,6 +253,19 @@ class CacheSync:
             expires_at=now + ttl,
             fail_safe_until=now + ttl + opts.fail_safe_seconds,
         )
+        self._enforce_max_keys(opts)
+
+    def _enforce_max_keys(self, opts: CacheOptions) -> None:
+        if opts.max_keys is None:
+            return
+
+        if opts.max_keys <= 0:
+            self._memory.clear()
+            return
+
+        while len(self._memory) > opts.max_keys:
+            oldest_key = next(iter(self._memory))
+            self._memory.pop(oldest_key)
 
     def _ttl_with_jitter(self, opts: CacheOptions) -> float:
         if opts.jitter_seconds <= 0:
