@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/petercinibulk/cache-sync/compare/cache-sync-v0.3.0...cache-sync-v0.3.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* trigger release ([954e649](https://github.com/petercinibulk/cache-sync/commit/954e649f3dc727a6046ca3cacf4eda747b3632f4))
+
 ## [0.3.0](https://github.com/petercinibulk/hybrid-cache/compare/cache-sync-v0.2.0...cache-sync-v0.3.0) (2026-06-22)
 
 
