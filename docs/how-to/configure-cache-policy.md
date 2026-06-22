@@ -31,6 +31,9 @@ async def get_product(product_id: str) -> dict[str, str]:
     ...
 ```
 
+Overrides apply only to the affected cached key. Supplied values replace the defaults
+configured on `CacheSync`, and omitted values inherit those defaults.
+
 ## Choose practical values
 
 | Option | Use it for | Common starting point |

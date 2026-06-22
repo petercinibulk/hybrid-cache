@@ -15,10 +15,14 @@ Pass options to the cache for global defaults:
 cache = CacheSync(options=CacheOptions(ttl_seconds=120))
 ```
 
-Pass options to `@cache.cached` for one function:
+Pass options to `@cache.cached`, `get_or_set`, or `set` for a specific cached key:
 
 ```python
 @cache.cached(options=CacheOptions(ttl_seconds=30))
 async def load_value() -> str:
     ...
 ```
+
+Only options supplied to the cache constructor establish cache-wide defaults. Options
+supplied anywhere else override those defaults only for the affected cached key; omitted
+fields inherit from the cache defaults.

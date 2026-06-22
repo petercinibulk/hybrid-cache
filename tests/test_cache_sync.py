@@ -236,3 +236,51 @@ async def test_decorator_accepts_cache_policy_overrides() -> None:
     await asyncio.sleep(0.02)
     assert await get_value() == "value-2"
     assert calls == 2
+
+
+@pytest.mark.asyncio
+async def test_cache_policy_overrides_apply_only_to_supplied_key() -> None:
+    cache = CacheSync(options=CacheOptions(ttl_seconds=60))
+
+    fast_calls = 0
+    slow_calls = 0
+
+    async def fast_factory() -> str:
+        nonlocal fast_calls
+        fast_calls += 1
+        return f"fast-{fast_calls}"
+
+    async def slow_factory() -> str:
+        nonlocal slow_calls
+        slow_calls += 1
+        return f"slow-{slow_calls}"
+
+    assert (
+        await cache.get_or_set(
+            "fast",
+            fast_factory,
+            options=CacheOptions(ttl_seconds=0.01),
+        )
+        == "fast-1"
+    )
+    assert await cache.get_or_set("slow", slow_factory) == "slow-1"
+    await asyncio.sleep(0.02)
+
+    assert await cache.get_or_set("fast", fast_factory) == "fast-2"
+    assert await cache.get_or_set("slow", slow_factory) == "slow-1"
+
+
+@pytest.mark.asyncio
+async def test_cache_policy_overrides_inherit_unsupplied_constructor_defaults() -> None:
+    cache = CacheSync(options=CacheOptions(ttl_seconds=60, hard_timeout_seconds=0.01))
+
+    async def slow_factory() -> str:
+        await asyncio.sleep(0.02)
+        return "value"
+
+    with pytest.raises(TimeoutError):
+        await cache.get_or_set(
+            "key",
+            slow_factory,
+            options=CacheOptions(ttl_seconds=60),
+        )

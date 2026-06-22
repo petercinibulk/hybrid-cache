@@ -4,7 +4,7 @@ import asyncio
 import random
 import time
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ParamSpec, TypeVar, cast
 
 from cache_sync.distributed_cache import DistributedCache
@@ -12,12 +12,25 @@ from cache_sync.invalidation import InvalidationBus
 
 T = TypeVar("T")
 P = ParamSpec("P")
+_CACHE_OPTION_DEFAULTS = {
+    "ttl_seconds": 60.0,
+    "fail_safe_seconds": 300.0,
+    "hard_timeout_seconds": 5.0,
+    "jitter_seconds": 0.0,
+}
+
+
+class _Unset:
+    __slots__ = ()
+
+
+_UNSET = _Unset()
 
 if TYPE_CHECKING:
     from cache_sync.decorators import CachedFunction
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True, init=False)
 class CacheOptions:
     """Runtime policy for cache freshness, factory timeouts, and TTL jitter."""
 
@@ -25,6 +38,41 @@ class CacheOptions:
     fail_safe_seconds: float = 300
     hard_timeout_seconds: float = 5
     jitter_seconds: float = 0
+    _supplied: frozenset[str] = field(
+        default_factory=frozenset,
+        repr=False,
+        compare=False,
+    )
+
+    def __init__(
+        self,
+        ttl_seconds: float | _Unset = _UNSET,
+        fail_safe_seconds: float | _Unset = _UNSET,
+        hard_timeout_seconds: float | _Unset = _UNSET,
+        jitter_seconds: float | _Unset = _UNSET,
+    ) -> None:
+        values = {
+            "ttl_seconds": ttl_seconds,
+            "fail_safe_seconds": fail_safe_seconds,
+            "hard_timeout_seconds": hard_timeout_seconds,
+            "jitter_seconds": jitter_seconds,
+        }
+        supplied = frozenset(name for name, value in values.items() if value is not _UNSET)
+
+        for name, default in _CACHE_OPTION_DEFAULTS.items():
+            value = values[name]
+            object.__setattr__(self, name, default if value is _UNSET else value)
+
+        object.__setattr__(self, "_supplied", supplied)
+
+    def merge_over(self, defaults: CacheOptions) -> CacheOptions:
+        """Return this option object's supplied fields over cache defaults."""
+
+        values = {
+            name: getattr(self if name in self._supplied else defaults, name)
+            for name in _CACHE_OPTION_DEFAULTS
+        }
+        return CacheOptions(**values)
 
 
 @dataclass(slots=True)
@@ -103,7 +151,7 @@ class CacheSync:
     ) -> T:
         """Return a cached value or compute, store, and return a new value."""
 
-        opts = options or self._options
+        opts = self._effective_options(options)
         entry = self._memory.get(key)
 
         if entry and entry.is_fresh:
@@ -146,7 +194,7 @@ class CacheSync:
     ) -> None:
         """Store a value in local memory and optional distributed storage."""
 
-        opts = options or self._options
+        opts = self._effective_options(options)
         self._set_memory(key, value, opts)
 
         if self._distributed_cache is not None:
@@ -187,6 +235,11 @@ class CacheSync:
         """Clear only this process's in-memory cache."""
 
         self._memory.clear()
+
+    def _effective_options(self, options: CacheOptions | None) -> CacheOptions:
+        if options is None:
+            return self._options
+        return options.merge_over(self._options)
 
     def _set_memory(self, key: str, value: object, opts: CacheOptions) -> None:
         ttl = self._ttl_with_jitter(opts)
