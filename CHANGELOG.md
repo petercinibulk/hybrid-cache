@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/petercinibulk/cache-sync/compare/cache-sync-v0.4.0...cache-sync-v0.5.0) (2026-06-23)
+
+
+### Features
+
+* add memcache distributed cache support ([#7](https://github.com/petercinibulk/cache-sync/issues/7)) ([e298429](https://github.com/petercinibulk/cache-sync/commit/e29842983f9800e19105f52f9b5492212a711ab7))
+
 ## [0.4.0](https://github.com/petercinibulk/cache-sync/compare/cache-sync-v0.3.1...cache-sync-v0.4.0) (2026-06-23)
 
 
