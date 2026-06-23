@@ -10,6 +10,14 @@ uv add "async-hybrid-cache[redis]"
 
 Use this when Redis should store shared cached values, carry invalidation messages, or both.
 
+## Memcached distributed cache
+
+```bash
+uv add "cache-sync[memcache]"
+```
+
+Use this when Memcached should store shared cached values. Memcached does not provide an invalidation bus, so pair it with Redis Streams, RabbitMQ, Kafka, PostgreSQL, or manual invalidation when multiple application instances need coordinated local cache removal.
+
 ## RabbitMQ invalidation
 
 ```bash

@@ -1,11 +1,11 @@
 # async-hybrid-cache
 
-Async hybrid Python cache with in-memory L1 caching, optional Redis L2 caching, pluggable invalidation, stampede protection, fail-safe stale values, and typed decorators.
+Async hybrid Python cache with in-memory L1 caching, optional Redis or Memcached L2 caching, pluggable invalidation, stampede protection, fail-safe stale values, and typed decorators.
 
 ## Features
 
 - Async-first API for Python 3.12 and newer.
-- Fast in-process L1 cache with optional Redis-backed L2 storage.
+- Fast in-process L1 cache with optional Redis-backed or Memcached-backed L2 storage.
 - Pluggable invalidation buses for Redis Streams, RabbitMQ, Kafka, and PostgreSQL.
 - Request stampede protection with per-key refresh coordination.
 - Fail-safe stale reads for short backend outages.
@@ -25,16 +25,26 @@ uv add async-hybrid-cache
 Install optional providers only when your application uses them:
 
 ```bash
+<<<<<<< HEAD
 uv add "async-hybrid-cache[redis]"
 uv add "async-hybrid-cache[rabbitmq]"
 uv add "async-hybrid-cache[kafka]"
 uv add "async-hybrid-cache[postgres]"
 uv add "async-hybrid-cache[all]"
+=======
+uv add "cache-sync[redis]"
+uv add "cache-sync[memcache]"
+uv add "cache-sync[rabbitmq]"
+uv add "cache-sync[kafka]"
+uv add "cache-sync[postgres]"
+uv add "cache-sync[all]"
+>>>>>>> e298429 (feat: add memcache distributed cache support (#7))
 ```
 
 | Extra | Installs | Use when |
 | --- | --- | --- |
 | `redis` | `redis` | You need Redis L2 storage or Redis Streams invalidation. |
+| `memcache` | `aiomcache` | You need Memcached L2 storage. |
 | `rabbitmq` | `aio-pika` | You use RabbitMQ as the invalidation bus. |
 | `kafka` | `aiokafka` | You use Kafka as the invalidation bus. |
 | `postgres` | `asyncpg` | You use PostgreSQL `LISTEN`/`NOTIFY` for invalidation. |
@@ -68,6 +78,7 @@ await get_user.remove_cached("123")
 await cache.stop()
 ```
 
+<<<<<<< HEAD
 ## Redis L2 Example
 
 ```python
@@ -92,6 +103,8 @@ async def get_product(product_id: str) -> dict[str, str]:
 
 For a complete walkthrough with shared values and cross-instance invalidation, see the [get started tutorial](https://petercinibulk.github.io/async-hybrid-cache/tutorials/get-started/).
 
+=======
+>>>>>>> e298429 (feat: add memcache distributed cache support (#7))
 ## Project
 
 - License: MIT

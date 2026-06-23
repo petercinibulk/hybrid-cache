@@ -20,10 +20,18 @@ from async_hybrid_cache.serializers import (
 )
 
 if TYPE_CHECKING:
+<<<<<<< HEAD:src/async_hybrid_cache/__init__.py
     from async_hybrid_cache.providers.kafka import KafkaInvalidationBus
     from async_hybrid_cache.providers.postgres import PostgresNotifyInvalidationBus
     from async_hybrid_cache.providers.rabbitmq import RabbitMQInvalidationBus
     from async_hybrid_cache.providers.redis import (
+=======
+    from cache_sync.providers.kafka import KafkaInvalidationBus
+    from cache_sync.providers.memcache import MemcachedDistributedCache
+    from cache_sync.providers.postgres import PostgresNotifyInvalidationBus
+    from cache_sync.providers.rabbitmq import RabbitMQInvalidationBus
+    from cache_sync.providers.redis import (
+>>>>>>> e298429 (feat: add memcache distributed cache support (#7)):src/cache_sync/__init__.py
         RedisDistributedCache,
         RedisStreamsInvalidationBus,
     )
@@ -39,6 +47,7 @@ __all__ = [
     "InvalidationTransport",
     "JsonSerializer",
     "KafkaInvalidationBus",
+    "MemcachedDistributedCache",
     "PickleSerializer",
     "PostgresNotifyInvalidationBus",
     "PydanticSerializer",
@@ -61,6 +70,11 @@ def __getattr__(name: str) -> Any:
         from async_hybrid_cache.providers.redis import RedisStreamsInvalidationBus
 
         return RedisStreamsInvalidationBus
+
+    if name == "MemcachedDistributedCache":
+        from cache_sync.providers.memcache import MemcachedDistributedCache
+
+        return MemcachedDistributedCache
 
     if name == "RabbitMQInvalidationBus":
         from async_hybrid_cache.providers.rabbitmq import RabbitMQInvalidationBus
