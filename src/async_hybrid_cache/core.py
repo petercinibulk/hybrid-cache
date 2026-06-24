@@ -8,8 +8,8 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ParamSpec, TypeVar, cast
 
-from cache_sync.distributed_cache import DistributedCache
-from cache_sync.invalidation import InvalidationBus
+from async_hybrid_cache.distributed_cache import DistributedCache
+from async_hybrid_cache.invalidation import InvalidationBus
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -30,7 +30,7 @@ class _Unset:
 _UNSET = _Unset()
 
 if TYPE_CHECKING:
-    from cache_sync.decorators import CachedFunction
+    from async_hybrid_cache.decorators import CachedFunction
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -100,9 +100,9 @@ class CacheEntry:
 
 @dataclass(frozen=True, slots=True)
 class ScopedCache:
-    """Named view over a `CacheSync` instance with scope-specific defaults."""
+    """Named view over an `AsyncHybridCache` instance with scope-specific defaults."""
 
-    _cache: CacheSync
+    _cache: AsyncHybridCache
     name: str
     options: CacheOptions | None = None
 
@@ -177,7 +177,7 @@ class ScopedCache:
 
         self._cache.clear_memory(scope=self.name)
 
-class CacheSync:
+class AsyncHybridCache:
     """Async two-level cache with optional distributed storage and invalidation."""
 
     def __init__(
@@ -221,7 +221,7 @@ class CacheSync:
     ) -> Callable[[Callable[P, Awaitable[T]]], CachedFunction[P, T]]:
         """Decorate an async function using this cache instance."""
 
-        from cache_sync.decorators import CachedFunction
+        from async_hybrid_cache.decorators import CachedFunction
 
         def decorator(func: Callable[P, Awaitable[T]]) -> CachedFunction[P, T]:
             return CachedFunction(self, func, key, options, scope)

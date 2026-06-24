@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from contextlib import suppress
 from typing import Any
 
-from cache_sync.invalidation import (
+from async_hybrid_cache.invalidation import (
     ClearLocal,
     InvalidationMessage,
     RemoveLocal,
@@ -22,7 +22,7 @@ class KafkaInvalidationBus:
         self,
         *,
         bootstrap_servers: str | Sequence[str],
-        topic: str = "cache-sync-invalidations",
+        topic: str = "async-hybrid-cache-invalidations",
         node_name: str | None = None,
         group_id: str | None = None,
     ) -> None:
@@ -37,7 +37,7 @@ class KafkaInvalidationBus:
         self._topic = topic
         self._source_id = str(uuid.uuid4())
         self._node_name = node_name or f"{socket.gethostname()}-{self._source_id}"
-        self._group_id = group_id or f"cache-sync-node:{self._node_name}"
+        self._group_id = group_id or f"async-hybrid-cache-node:{self._node_name}"
         self._remove_local: RemoveLocal | None = None
         self._clear_local: ClearLocal | None = None
         self._producer: Any | None = None
@@ -58,7 +58,7 @@ class KafkaInvalidationBus:
         try:
             from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
         except ImportError as ex:  # pragma: no cover - exercised only without optional deps
-            msg = "Install cache-sync with the kafka dependency group to use Kafka."
+            msg = "Install async-hybrid-cache with the kafka dependency group to use Kafka."
             raise RuntimeError(msg) from ex
 
         self._remove_local = remove_local

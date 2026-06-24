@@ -5,9 +5,9 @@ Use `@cache.cached()` on async functions whose return value can be reused for th
 ## Use the default key
 
 ```python
-from cache_sync import CacheSync
+from async_hybrid_cache import AsyncHybridCache
 
-cache = CacheSync()
+cache = AsyncHybridCache()
 
 
 @cache.cached()
@@ -15,7 +15,7 @@ async def get_settings(tenant_id: str) -> dict[str, str]:
     ...
 ```
 
-When no key is supplied, `Cache-Sync` builds one from the function module, qualified name, and bound arguments.
+When no key is supplied, `Async Hybrid Cache` builds one from the function module, qualified name, and bound arguments.
 
 ## Use a custom key
 

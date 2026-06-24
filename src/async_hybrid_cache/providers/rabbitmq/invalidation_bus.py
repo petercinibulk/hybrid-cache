@@ -6,7 +6,7 @@ import uuid
 from contextlib import suppress
 from typing import Any
 
-from cache_sync.invalidation import (
+from async_hybrid_cache.invalidation import (
     ClearLocal,
     InvalidationMessage,
     RemoveLocal,
@@ -20,7 +20,7 @@ class RabbitMQInvalidationBus:
         self,
         connection: Any,
         *,
-        exchange_name: str = "cache-sync-invalidations",
+        exchange_name: str = "async-hybrid-cache-invalidations",
         node_name: str | None = None,
     ) -> None:
         """Create a RabbitMQ invalidation bus using an existing connection."""
@@ -50,7 +50,7 @@ class RabbitMQInvalidationBus:
         try:
             from aio_pika import ExchangeType
         except ImportError as ex:  # pragma: no cover - exercised only without optional deps
-            msg = "Install cache-sync with the rabbitmq dependency group to use RabbitMQ."
+            msg = "Install async-hybrid-cache with the rabbitmq dependency group to use RabbitMQ."
             raise RuntimeError(msg) from ex
 
         self._remove_local = remove_local
@@ -103,7 +103,7 @@ class RabbitMQInvalidationBus:
         try:
             from aio_pika import Message
         except ImportError as ex:  # pragma: no cover - exercised only without optional deps
-            msg = "Install cache-sync with the rabbitmq dependency group to use RabbitMQ."
+            msg = "Install async-hybrid-cache with the rabbitmq dependency group to use RabbitMQ."
             raise RuntimeError(msg) from ex
 
         await self._exchange.publish(

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from cache_sync.serializers import PickleSerializer as PickleSerializer
-from cache_sync.serializers import Serializer as Serializer
+from async_hybrid_cache.serializers import PickleSerializer as PickleSerializer
+from async_hybrid_cache.serializers import Serializer as Serializer
 
 
 class DistributedCache(Protocol):

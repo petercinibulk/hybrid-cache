@@ -1,6 +1,6 @@
 # Provider Failure Modes
 
-`CacheSync` separates value storage from invalidation. That makes provider behavior easier to reason about, but each provider still has operational tradeoffs.
+`AsyncHybridCache` separates value storage from invalidation. That makes provider behavior easier to reason about, but each provider still has operational tradeoffs.
 
 ## Distributed cache failures
 

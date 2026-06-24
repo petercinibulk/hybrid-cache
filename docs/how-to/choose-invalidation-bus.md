@@ -5,9 +5,9 @@ An invalidation bus tells other application instances to remove local L1 entries
 ## Use Redis Streams when Redis is already your cache backend
 
 ```python
-from cache_sync import RedisDistributedCache, RedisStreamsInvalidationBus
+from async_hybrid_cache import RedisDistributedCache, RedisStreamsInvalidationBus
 
-cache = CacheSync(
+cache = AsyncHybridCache(
     distributed_cache=RedisDistributedCache(redis),
     invalidation_bus=RedisStreamsInvalidationBus(redis),
 )
@@ -19,10 +19,10 @@ This is the simplest distributed setup when Redis is already part of your app.
 
 ```python
 from aio_pika import connect_robust
-from cache_sync import RabbitMQInvalidationBus
+from async_hybrid_cache import RabbitMQInvalidationBus
 
 connection = await connect_robust("amqp://guest:guest@localhost/")
-cache = CacheSync(
+cache = AsyncHybridCache(
     invalidation_bus=RabbitMQInvalidationBus(connection),
 )
 ```
@@ -32,9 +32,9 @@ RabbitMQ uses a fanout exchange so each running application instance receives ea
 ## Use Kafka when it is already your platform bus
 
 ```python
-from cache_sync import KafkaInvalidationBus
+from async_hybrid_cache import KafkaInvalidationBus
 
-cache = CacheSync(
+cache = AsyncHybridCache(
     invalidation_bus=KafkaInvalidationBus(
         bootstrap_servers="localhost:9092",
     ),
@@ -47,10 +47,10 @@ By default, every node gets a unique consumer group. Do not share one `group_id`
 
 ```python
 import asyncpg
-from cache_sync import PostgresNotifyInvalidationBus
+from async_hybrid_cache import PostgresNotifyInvalidationBus
 
 connection = await asyncpg.connect("postgresql://localhost/app")
-cache = CacheSync(
+cache = AsyncHybridCache(
     invalidation_bus=PostgresNotifyInvalidationBus(connection),
 )
 ```

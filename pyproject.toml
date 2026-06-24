@@ -1,5 +1,5 @@
 [project]
-name = "cache-sync"
+name = "async-hybrid-cache"
 version = "0.3.1"
 description = "Async hybrid Python cache with in-memory L1, distributed L2 providers, pluggable invalidation, stampede protection, and typed decorators."
 readme = "README.md"
@@ -25,10 +25,10 @@ classifiers = [
 ]
 
 [project.urls]
-Changelog = "https://github.com/petercinibulk/cache-sync/blob/main/CHANGELOG.md"
-Documentation = "https://petercinibulk.github.io/cache-sync/"
-Issues = "https://github.com/petercinibulk/cache-sync/issues"
-Repository = "https://github.com/petercinibulk/cache-sync"
+Changelog = "https://github.com/petercinibulk/async-hybrid-cache/blob/main/CHANGELOG.md"
+Documentation = "https://petercinibulk.github.io/async-hybrid-cache/"
+Issues = "https://github.com/petercinibulk/async-hybrid-cache/issues"
+Repository = "https://github.com/petercinibulk/async-hybrid-cache"
 
 # Published optional dependencies, or "extras".
 [project.optional-dependencies]
@@ -92,7 +92,7 @@ indent-style = "space"
 
 [tool.pytest.ini_options]
 addopts = [
-  "--cov=cache_sync",
+  "--cov=async_hybrid_cache",
   "--cov-report=term-missing",
 ]
 asyncio_mode = "auto"

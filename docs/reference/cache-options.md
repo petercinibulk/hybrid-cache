@@ -14,7 +14,7 @@ the maximum number of local keys to retain per scope.
 Pass options to the cache for global defaults:
 
 ```python
-cache = CacheSync(options=CacheOptions(ttl_seconds=120, lru_max_keys=1_000))
+cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=120, lru_max_keys=1_000))
 ```
 
 Pass options to `@cache.cached` for that function's scope:

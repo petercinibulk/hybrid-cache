@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from cache_sync import PostgresNotifyInvalidationBus
+from async_hybrid_cache import PostgresNotifyInvalidationBus
 
 
 class FakeConnection:

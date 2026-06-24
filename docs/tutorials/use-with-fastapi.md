@@ -1,19 +1,19 @@
 # Use With FastAPI
 
-In this tutorial you will add `Cache-Sync` to a FastAPI application, cache a
+In this tutorial you will add `Async Hybrid Cache` to a FastAPI application, cache a
 service function, and invalidate the cached value after a write.
 
 ## Install dependencies
 
-Install FastAPI, an ASGI server, and `cache-sync`:
+Install FastAPI, an ASGI server, and `async-hybrid-cache`:
 
 ```bash
-uv add cache-sync fastapi uvicorn
+uv add async-hybrid-cache fastapi uvicorn
 ```
 
 ## Create the cache
 
-Create one `CacheSync` instance for the application:
+Create one `AsyncHybridCache` instance for the application:
 
 ```python
 from collections.abc import AsyncIterator
@@ -22,10 +22,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from cache_sync import CacheOptions, CacheSync
+from async_hybrid_cache import CacheOptions, AsyncHybridCache
 
 
-cache = CacheSync(
+cache = AsyncHybridCache(
     options=CacheOptions(
         ttl_seconds=60,
         fail_safe_seconds=300,
@@ -147,18 +147,18 @@ process has its own local L1 cache. Add Redis for shared values and Redis Stream
 for cross-instance invalidation:
 
 ```bash
-uv add "cache-sync[redis]"
+uv add "async-hybrid-cache[redis]"
 ```
 
 ```python
 from redis.asyncio import Redis
 
-from cache_sync import RedisDistributedCache, RedisStreamsInvalidationBus
+from async_hybrid_cache import RedisDistributedCache, RedisStreamsInvalidationBus
 
 
 redis = Redis.from_url("redis://localhost:6379/0", decode_responses=False)
 
-cache = CacheSync(
+cache = AsyncHybridCache(
     distributed_cache=RedisDistributedCache(redis),
     invalidation_bus=RedisStreamsInvalidationBus(redis),
     options=CacheOptions(ttl_seconds=60, fail_safe_seconds=300, lru_max_keys=1_000),

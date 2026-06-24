@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cache_sync.invalidation import (
+from async_hybrid_cache.invalidation import (
     InvalidationHandler,
     InvalidationMessage,
     TransportInvalidationBus,

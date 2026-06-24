@@ -4,8 +4,8 @@ import asyncio
 
 import pytest
 
-from cache_sync import CacheOptions, CacheSync
-from cache_sync.invalidation import ClearLocal, RemoveLocal
+from async_hybrid_cache import AsyncHybridCache, CacheOptions
+from async_hybrid_cache.invalidation import ClearLocal, RemoveLocal
 
 
 class RecordingInvalidationBus:
@@ -57,7 +57,7 @@ class RecordingDistributedCache:
 
 @pytest.mark.asyncio
 async def test_get_or_set_returns_cached_value() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60))
     calls = 0
 
     async def factory() -> str:
@@ -75,7 +75,7 @@ async def test_get_or_set_returns_cached_value() -> None:
 
 @pytest.mark.asyncio
 async def test_get_or_set_prevents_stampede() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60))
     calls = 0
 
     async def factory() -> str:
@@ -92,7 +92,7 @@ async def test_get_or_set_prevents_stampede() -> None:
 
 @pytest.mark.asyncio
 async def test_fail_safe_returns_stale_value() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=0.01, fail_safe_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=0.01, fail_safe_seconds=60))
 
     async def working_factory() -> str:
         return "stale"
@@ -110,7 +110,7 @@ async def test_fail_safe_returns_stale_value() -> None:
 
 @pytest.mark.asyncio
 async def test_remove_deletes_cached_value() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60))
     calls = 0
 
     async def factory() -> str:
@@ -126,7 +126,7 @@ async def test_remove_deletes_cached_value() -> None:
 @pytest.mark.asyncio
 async def test_invalidation_bus_works_without_distributed_cache() -> None:
     bus = RecordingInvalidationBus()
-    cache = CacheSync(
+    cache = AsyncHybridCache(
         invalidation_bus=bus,
         options=CacheOptions(ttl_seconds=60),
     )
@@ -150,7 +150,7 @@ async def test_invalidation_bus_works_without_distributed_cache() -> None:
 async def test_invalidation_bus_and_distributed_cache_are_independent() -> None:
     distributed_cache = RecordingDistributedCache()
     bus = RecordingInvalidationBus()
-    cache = CacheSync(
+    cache = AsyncHybridCache(
         distributed_cache=distributed_cache,
         invalidation_bus=bus,
         options=CacheOptions(ttl_seconds=60),
@@ -170,7 +170,7 @@ async def test_invalidation_bus_and_distributed_cache_are_independent() -> None:
 
 @pytest.mark.asyncio
 async def test_decorator_preserves_return_type_and_remove_cached() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60))
     calls = 0
 
     @cache.cached(lambda user_id: f"user:{user_id}")
@@ -193,7 +193,7 @@ async def test_decorator_preserves_return_type_and_remove_cached() -> None:
 
 @pytest.mark.asyncio
 async def test_decorator_defaults_to_function_arguments_cache_key() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60))
     calls = 0
 
     @cache.cached()
@@ -223,7 +223,7 @@ async def test_decorator_defaults_to_function_arguments_cache_key() -> None:
 
 @pytest.mark.asyncio
 async def test_decorator_accepts_cache_policy_overrides() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, fail_safe_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, fail_safe_seconds=60))
     calls = 0
 
     @cache.cached(options=CacheOptions(ttl_seconds=0.01))
@@ -240,7 +240,7 @@ async def test_decorator_accepts_cache_policy_overrides() -> None:
 
 @pytest.mark.asyncio
 async def test_cache_policy_overrides_apply_only_to_supplied_key() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60))
 
     fast_calls = 0
     slow_calls = 0
@@ -272,7 +272,7 @@ async def test_cache_policy_overrides_apply_only_to_supplied_key() -> None:
 
 @pytest.mark.asyncio
 async def test_cache_policy_overrides_inherit_unsupplied_constructor_defaults() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, hard_timeout_seconds=0.01))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, hard_timeout_seconds=0.01))
 
     async def slow_factory() -> str:
         await asyncio.sleep(0.02)
@@ -288,7 +288,7 @@ async def test_cache_policy_overrides_inherit_unsupplied_constructor_defaults() 
 
 @pytest.mark.asyncio
 async def test_lru_max_keys_removes_least_recently_used_key() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
 
     await cache.set("first", "one")
     await cache.set("second", "two")
@@ -299,7 +299,7 @@ async def test_lru_max_keys_removes_least_recently_used_key() -> None:
 
 @pytest.mark.asyncio
 async def test_lru_max_keys_treats_fresh_read_as_recent_use() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
     calls = 0
 
     async def factory() -> str:
@@ -320,7 +320,7 @@ async def test_lru_max_keys_treats_fresh_read_as_recent_use() -> None:
 
 @pytest.mark.asyncio
 async def test_lru_max_keys_treats_refreshed_key_as_recent_use() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
 
     await cache.set("first", "one")
     await cache.set("second", "two")
@@ -332,7 +332,7 @@ async def test_lru_max_keys_treats_refreshed_key_as_recent_use() -> None:
 
 @pytest.mark.asyncio
 async def test_lru_max_keys_composes_with_decorator_and_ttl() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
     calls = 0
 
     @cache.cached(lambda key: key, options=CacheOptions(ttl_seconds=0.01))
@@ -355,7 +355,7 @@ async def test_lru_max_keys_composes_with_decorator_and_ttl() -> None:
 
 @pytest.mark.asyncio
 async def test_lru_max_keys_zero_clears_local_memory() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=2))
 
     await cache.set("first", "one")
     await cache.set("second", "two", options=CacheOptions(lru_max_keys=0))
@@ -365,7 +365,7 @@ async def test_lru_max_keys_zero_clears_local_memory() -> None:
 
 @pytest.mark.asyncio
 async def test_lru_max_keys_override_can_raise_or_disable_constructor_limit() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=1))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=1))
 
     await cache.set("first", "one")
     await cache.set("second", "two", options=CacheOptions(lru_max_keys=2))
@@ -380,7 +380,7 @@ async def test_lru_max_keys_override_can_raise_or_disable_constructor_limit() ->
 @pytest.mark.asyncio
 async def test_manual_scope_has_independent_lru_limit_and_operations() -> None:
     bus = RecordingInvalidationBus()
-    cache = CacheSync(invalidation_bus=bus, options=CacheOptions(ttl_seconds=60))
+    cache = AsyncHybridCache(invalidation_bus=bus, options=CacheOptions(ttl_seconds=60))
     users = cache.scope("users", options=CacheOptions(lru_max_keys=2))
     products = cache.scope("products", options=CacheOptions(lru_max_keys=1))
 
@@ -410,7 +410,7 @@ async def test_manual_scope_has_independent_lru_limit_and_operations() -> None:
 
 @pytest.mark.asyncio
 async def test_manual_scope_options_inherit_cache_defaults() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=0.01, fail_safe_seconds=60))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=0.01, fail_safe_seconds=60))
     users = cache.scope("users", options=CacheOptions(lru_max_keys=2))
 
     await users.set("1", "ada")
@@ -421,7 +421,7 @@ async def test_manual_scope_options_inherit_cache_defaults() -> None:
 
 @pytest.mark.asyncio
 async def test_cached_functions_get_independent_default_lru_scopes() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=1))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=1))
     user_calls = 0
     product_calls = 0
 
@@ -449,7 +449,7 @@ async def test_cached_functions_get_independent_default_lru_scopes() -> None:
 
 @pytest.mark.asyncio
 async def test_cached_functions_can_share_an_explicit_scope() -> None:
-    cache = CacheSync(options=CacheOptions(ttl_seconds=60, lru_max_keys=1))
+    cache = AsyncHybridCache(options=CacheOptions(ttl_seconds=60, lru_max_keys=1))
     user_calls = 0
     product_calls = 0
 

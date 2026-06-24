@@ -11,7 +11,7 @@ from redis.asyncio import Redis
 from redis.exceptions import ResponseError
 from redis.typing import EncodableT, FieldT
 
-from cache_sync.invalidation import (
+from async_hybrid_cache.invalidation import (
     ClearLocal,
     InvalidationAction,
     InvalidationMessage,
@@ -30,7 +30,7 @@ class RedisStreamsInvalidationBus:
         self,
         redis: Redis,
         *,
-        stream_name: str = "cache-sync:invalidations",
+        stream_name: str = "async-hybrid-cache:invalidations",
         node_name: str | None = None,
         max_length: int = 10_000,
     ) -> None:
@@ -40,7 +40,7 @@ class RedisStreamsInvalidationBus:
         self._stream_name = stream_name
         self._source_id = str(uuid.uuid4())
         self._node_name = node_name or f"{socket.gethostname()}-{self._source_id}"
-        self._group_name = f"cache-sync-node:{self._node_name}"
+        self._group_name = f"async-hybrid-cache-node:{self._node_name}"
         self._consumer_name = self._node_name
         self._max_length = max_length
         self._remove_local: RemoveLocal | None = None

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from cache_sync import JsonSerializer, PickleSerializer, PydanticSerializer
+from async_hybrid_cache import JsonSerializer, PickleSerializer, PydanticSerializer
 
 
 def test_pickle_serializer_round_trips_python_objects() -> None:

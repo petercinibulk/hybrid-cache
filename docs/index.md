@@ -1,10 +1,10 @@
-# Cache-Sync
+# Async Hybrid Cache
 
-`Cache-Sync` helps async Python applications cache expensive work in local memory, optionally share values through Redis, and keep multiple application instances in sync with an invalidation bus.
+`Async Hybrid Cache` helps async Python applications cache expensive work in local memory, optionally share values through Redis, and keep multiple application instances in sync with an invalidation bus.
 
 ```mermaid
 flowchart LR
-    App["Async app"] --> Cache["Cache-Sync"]
+    App["Async app"] --> Cache["Async Hybrid Cache"]
     Cache --> L1["Local memory L1"]
     Cache -. optional .-> L2["Redis L2"]
     Cache -. optional .-> Bus["Invalidation bus"]
@@ -14,9 +14,9 @@ flowchart LR
 ## Quick Start
 
 ```python
-from cache_sync import CacheOptions, CacheSync
+from async_hybrid_cache import CacheOptions, AsyncHybridCache
 
-cache = CacheSync(
+cache = AsyncHybridCache(
     options=CacheOptions(
         ttl_seconds=60,
         fail_safe_seconds=300,

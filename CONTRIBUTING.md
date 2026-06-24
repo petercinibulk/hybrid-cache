@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve `cache-sync`.
+Thanks for helping improve `async-hybrid-cache`.
 
 ## Set Up
 
@@ -60,7 +60,7 @@ uv run zensical serve
 uv run zensical build --clean --strict
 ```
 
-Documentation should stay focused on people using `cache-sync` in their applications. Follow the Diataxis structure in `docs/`: tutorials, how-to guides, reference, and explanation.
+Documentation should stay focused on people using `async-hybrid-cache` in their applications. Follow the Diataxis structure in `docs/`: tutorials, how-to guides, reference, and explanation.
 
 ## Pull Requests
 

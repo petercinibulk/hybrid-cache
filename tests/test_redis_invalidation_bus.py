@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from cache_sync import RedisStreamsInvalidationBus
+from async_hybrid_cache import RedisStreamsInvalidationBus
 
 
 class FakeRedis:
@@ -82,6 +82,6 @@ async def test_redis_streams_invalidation_bus_applies_remote_messages() -> None:
     assert removed == [("user:1", "users")]
     assert cleared == ["users"]
     assert redis.acked == [
-        ("invalidations", "cache-sync-node:node", "1-0"),
-        ("invalidations", "cache-sync-node:node", "2-0"),
+        ("invalidations", "async-hybrid-cache-node:node", "1-0"),
+        ("invalidations", "async-hybrid-cache-node:node", "2-0"),
     ]

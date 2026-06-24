@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from cache_sync import RabbitMQInvalidationBus
+from async_hybrid_cache import RabbitMQInvalidationBus
 
 
 class FakeMessage:

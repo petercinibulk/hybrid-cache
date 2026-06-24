@@ -1,10 +1,10 @@
 [project]
-site_name = "Cache-Sync"
-site_description = "End-user documentation for adopting Cache-Sync in async Python applications."
+site_name = "Async Hybrid Cache"
+site_description = "End-user documentation for adopting Async Hybrid Cache in async Python applications."
 site_author = "Peter Cinibulk"
-site_url = "https://petercinibulk.github.io/cache-sync/"
-repo_url = "https://github.com/petercinibulk/cache-sync"
-repo_name = "petercinibulk/cache-sync"
+site_url = "https://petercinibulk.github.io/async-hybrid-cache/"
+repo_url = "https://github.com/petercinibulk/async-hybrid-cache"
+repo_name = "petercinibulk/async-hybrid-cache"
 edit_uri = "edit/main/docs/"
 copyright = "Copyright &copy; 2026 The authors"
 

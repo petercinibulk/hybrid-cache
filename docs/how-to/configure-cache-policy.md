@@ -6,9 +6,9 @@ local cache size.
 ## Set defaults for the whole cache
 
 ```python
-from cache_sync import CacheOptions, CacheSync
+from async_hybrid_cache import CacheOptions, AsyncHybridCache
 
-cache = CacheSync(
+cache = AsyncHybridCache(
     options=CacheOptions(
         ttl_seconds=120,
         fail_safe_seconds=600,
@@ -22,7 +22,7 @@ cache = CacheSync(
 ## Override policy for one cached function scope
 
 ```python
-from cache_sync import CacheOptions
+from async_hybrid_cache import CacheOptions
 
 
 @cache.cached(
@@ -34,10 +34,10 @@ async def get_product(product_id: str) -> dict[str, str]:
 ```
 
 Overrides apply to that cached function's scope. Supplied values replace the defaults
-configured on `CacheSync`, and omitted values inherit those defaults.
+configured on `AsyncHybridCache`, and omitted values inherit those defaults.
 
 Each decorated function gets its own local scope by default. `lru_max_keys` limits keys
-within that function's scope, not the whole `CacheSync` instance.
+within that function's scope, not the whole `AsyncHybridCache` instance.
 
 ## Configure a manual scope
 

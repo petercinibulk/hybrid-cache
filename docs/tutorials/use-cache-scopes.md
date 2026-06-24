@@ -9,9 +9,9 @@ or cleared without affecting other scopes.
 Start with cache-wide defaults, then create manual scopes with their own policy:
 
 ```python
-from cache_sync import CacheOptions, CacheSync
+from async_hybrid_cache import CacheOptions, AsyncHybridCache
 
-cache = CacheSync(
+cache = AsyncHybridCache(
     options=CacheOptions(
         ttl_seconds=60,
         fail_safe_seconds=300,
