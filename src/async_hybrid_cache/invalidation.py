@@ -103,11 +103,7 @@ class TransportInvalidationBus:
         remove_local = self._remove_local
         clear_local = self._clear_local
 
-        if (
-            message.action == "remove"
-            and message.key is not None
-            and message.scope is not None
-        ):
+        if message.action == "remove" and message.key is not None and message.scope is not None:
             if remove_local is not None:
                 remove_local(message.key, message.scope)
             return

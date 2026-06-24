@@ -177,6 +177,7 @@ class ScopedCache:
 
         self._cache.clear_memory(scope=self.name)
 
+
 class AsyncHybridCache:
     """Async two-level cache with optional distributed storage and invalidation."""
 

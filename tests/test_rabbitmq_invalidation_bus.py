@@ -143,7 +143,9 @@ async def test_rabbitmq_invalidation_bus_applies_remote_messages_and_ignores_sel
     assert consumer is not None
 
     await consumer(
-        FakeIncomingMessage(b'{"action":"remove","source_id":"remote","key":"user:1","scope":"users"}')
+        FakeIncomingMessage(
+            b'{"action":"remove","source_id":"remote","key":"user:1","scope":"users"}'
+        )
     )
     await consumer(FakeIncomingMessage(b'{"action":"clear","source_id":"remote","scope":"users"}'))
     await consumer(
