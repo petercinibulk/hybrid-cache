@@ -32,7 +32,7 @@ jobs:
       id-token: write
     environment:
       name: pypi
-      url: https://pypi.org/p/cache-sync
+      url: https://pypi.org/p/async-hybrid-cache
 
     steps:
       - name: Checkout

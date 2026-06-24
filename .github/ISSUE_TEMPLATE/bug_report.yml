@@ -1,5 +1,5 @@
 name: Bug report
-description: Report incorrect behavior in cache-sync.
+description: Report incorrect behavior in async-hybrid-cache.
 title: "fix: "
 labels: ["bug"]
 body:
@@ -27,7 +27,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: cache-sync version
+      label: async-hybrid-cache version
       placeholder: "0.1.0"
     validations:
       required: true

@@ -21,6 +21,7 @@ from async_hybrid_cache.serializers import (
 
 if TYPE_CHECKING:
     from async_hybrid_cache.providers.kafka import KafkaInvalidationBus
+    from async_hybrid_cache.providers.memcache import MemcachedDistributedCache
     from async_hybrid_cache.providers.postgres import PostgresNotifyInvalidationBus
     from async_hybrid_cache.providers.rabbitmq import RabbitMQInvalidationBus
     from async_hybrid_cache.providers.redis import (
@@ -39,6 +40,7 @@ __all__ = [
     "InvalidationTransport",
     "JsonSerializer",
     "KafkaInvalidationBus",
+    "MemcachedDistributedCache",
     "PickleSerializer",
     "PostgresNotifyInvalidationBus",
     "PydanticSerializer",
@@ -61,6 +63,11 @@ def __getattr__(name: str) -> Any:
         from async_hybrid_cache.providers.redis import RedisStreamsInvalidationBus
 
         return RedisStreamsInvalidationBus
+
+    if name == "MemcachedDistributedCache":
+        from async_hybrid_cache.providers.memcache import MemcachedDistributedCache
+
+        return MemcachedDistributedCache
 
     if name == "RabbitMQInvalidationBus":
         from async_hybrid_cache.providers.rabbitmq import RabbitMQInvalidationBus

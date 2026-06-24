@@ -1,11 +1,11 @@
 # async-hybrid-cache
 
-Async hybrid Python cache with in-memory L1 caching, optional Redis L2 caching, pluggable invalidation, stampede protection, fail-safe stale values, and typed decorators.
+Async hybrid Python cache with in-memory L1 caching, optional Redis or Memcached L2 caching, pluggable invalidation, stampede protection, fail-safe stale values, and typed decorators.
 
 ## Features
 
 - Async-first API for Python 3.12 and newer.
-- Fast in-process L1 cache with optional Redis-backed L2 storage.
+- Fast in-process L1 cache with optional Redis-backed or Memcached-backed L2 storage.
 - Pluggable invalidation buses for Redis Streams, RabbitMQ, Kafka, and PostgreSQL.
 - Request stampede protection with per-key refresh coordination.
 - Fail-safe stale reads for short backend outages.
@@ -26,6 +26,7 @@ Install optional providers only when your application uses them:
 
 ```bash
 uv add "async-hybrid-cache[redis]"
+uv add "async-hybrid-cache[memcache]"
 uv add "async-hybrid-cache[rabbitmq]"
 uv add "async-hybrid-cache[kafka]"
 uv add "async-hybrid-cache[postgres]"
@@ -35,6 +36,7 @@ uv add "async-hybrid-cache[all]"
 | Extra | Installs | Use when |
 | --- | --- | --- |
 | `redis` | `redis` | You need Redis L2 storage or Redis Streams invalidation. |
+| `memcache` | `aiomcache` | You need Memcached L2 storage. |
 | `rabbitmq` | `aio-pika` | You use RabbitMQ as the invalidation bus. |
 | `kafka` | `aiokafka` | You use Kafka as the invalidation bus. |
 | `postgres` | `asyncpg` | You use PostgreSQL `LISTEN`/`NOTIFY` for invalidation. |
@@ -67,30 +69,6 @@ user = await get_user("123")
 await get_user.remove_cached("123")
 await cache.stop()
 ```
-
-## Redis L2 Example
-
-```python
-from redis.asyncio import Redis
-
-from async_hybrid_cache import CacheOptions, AsyncHybridCache, RedisDistributedCache
-
-redis = Redis.from_url("redis://localhost:6379/0")
-
-cache = AsyncHybridCache(
-    distributed_cache=RedisDistributedCache(redis),
-    options=CacheOptions(ttl_seconds=60, fail_safe_seconds=300),
-)
-
-await cache.start()
-
-
-@cache.cached(lambda product_id: f"product:{product_id}")
-async def get_product(product_id: str) -> dict[str, str]:
-    return {"id": product_id}
-```
-
-For a complete walkthrough with shared values and cross-instance invalidation, see the [get started tutorial](https://petercinibulk.github.io/async-hybrid-cache/tutorials/get-started/).
 
 ## Project
 

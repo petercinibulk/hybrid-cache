@@ -35,6 +35,7 @@ Provider classes are lazily imported so optional dependencies are only required 
 | --- | --- | --- |
 | `RedisDistributedCache` | `redis` | Stores shared cached values in Redis. |
 | `RedisStreamsInvalidationBus` | `redis` | Publishes invalidations through Redis Streams. |
+| `MemcachedDistributedCache` | `memcache` | Stores shared cached values in Memcached. |
 | `RabbitMQInvalidationBus` | `rabbitmq` | Publishes invalidations through a RabbitMQ fanout exchange. |
 | `KafkaInvalidationBus` | `kafka` | Publishes invalidations through a Kafka topic. |
 | `PostgresNotifyInvalidationBus` | `postgres` | Publishes invalidations through PostgreSQL `LISTEN`/`NOTIFY`. |
